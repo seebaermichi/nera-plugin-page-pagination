@@ -1,0 +1,8 @@
+#page-navigation
+  if meta.previous
+    a.previous(href=meta.previous)
+
+  a.home(href="/") #{meta.linkOverviewText}
+
+  if meta.next
+    a.next(href=meta.next)
