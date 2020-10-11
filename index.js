@@ -2,31 +2,53 @@ const { getConfig } = require('../plugin-helper')
 
 module.exports = (() => {
   const config = getConfig(`${__dirname}/config/page-pagination.yaml`)
+  const orderProperty = config.order_property || 'pagination_order'
 
-  const getPages = pagesData => {
-    const pagePath = config.page_path
-    return pagesData.filter(({ meta }) => meta.htmlPathName.includes(pagePath))
-      .sort((a, b) => Date.parse(b.meta.date) - Date.parse(a.meta.date))
-      .map(({ meta }) => meta.htmlPathName)
+  const getPageSiblings = (pagePathName, pagesData) => {
+    return pagesData.filter(({ meta }) => meta.pagePathName === pagePathName)
+      .sort((a, b) => {
+        if (a.meta[orderProperty] && b.meta[orderProperty]) {
+          return a.meta[orderProperty] - b.meta[orderProperty]
+        }
+
+        return a.meta.createdAt - b.meta.createdAt
+      })
+      .map(({ meta }) => ({
+        href: meta.href,
+        name: meta.title
+      }))
   }
 
-  const getPaginationLinks = (href, pages) => {
-    const index = pages.indexOf(href)
-
-    return {
-      previous: pages[index - 1] || false,
-      linkOverviewText: config.link_overview_text,
-      next: pages[index + 1] || false
+  const getPagePagination = (pagePathName, href, pagesData) => {
+    const pagePagination = {
+      'previous': false,
+      'next': false
     }
+
+    const pageSiblings = getPageSiblings(pagePathName, pagesData)
+
+    pageSiblings.forEach((page, index) => {
+      if (page.href === href) {
+        if (pageSiblings[index - 1]) {
+          pagePagination.previous = pageSiblings[index - 1]
+        }
+
+        if (pageSiblings[index + 1]) {
+          pagePagination.next = pageSiblings[index + 1]
+        }
+      }
+    })
+
+    return pagePagination
   }
 
   const getMetaData = data => {
     if (data.pagesData !== null && typeof data.pagesData === 'object') {
-      const pages = getPages(data.pagesData)
-
-      return data.pagesData.map(page => ({
-        content: page.content,
-        meta: Object.assign({}, page.meta, getPaginationLinks(page.meta.htmlPathName, pages))
+      data.pagesData = data.pagesData.map(({ content, meta }) => ({
+        content,
+        meta: Object.assign({}, meta, {
+          pagePagination: getPagePagination(meta.pagePathName, meta.href, data.pagesData)
+        })
       }))
     }
 

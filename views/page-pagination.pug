@@ -1,8 +1,5 @@
-#page-navigation
-  if meta.previous
-    a.previous(href=meta.previous)
+if meta.pagePagination.previous
+  a.previous(href=meta.pagePagination.previous.href) #{ meta.pagePagination.previous.name }
 
-  a.home(href="/") #{meta.linkOverviewText}
-
-  if meta.next
-    a.next(href=meta.next)
+if meta.pagePagination.next
+  a.next(href=meta.pagePagination.next.href) #{ meta.pagePagination.next.name }
