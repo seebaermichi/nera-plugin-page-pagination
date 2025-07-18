@@ -1,61 +1,69 @@
-const { getConfig } = require('../plugin-helper')
+import { getConfig } from '@nera-static/plugin-utils'
+import path from 'path'
 
-module.exports = (() => {
-  const config = getConfig(`${__dirname}/config/page-pagination.yaml`)
-  const orderProperty = config.order_property || 'pagination_order'
+const HOST_CONFIG_PATH = path.resolve(
+    process.cwd(),
+    'config/page-pagination.yaml'
+)
 
-  const getPageSiblings = (pagePathName, pagesData) => {
-    return pagesData.filter(({ meta }) => meta.pagePathName === pagePathName)
-      .sort((a, b) => {
-        if (a.meta[orderProperty] && b.meta[orderProperty]) {
-          return a.meta[orderProperty] - b.meta[orderProperty]
-        }
+const config = getConfig(HOST_CONFIG_PATH)
+const orderProperty = config.order_property || 'pagination_order'
 
-        return a.meta.createdAt - b.meta.createdAt
-      })
-      .map(({ meta }) => ({
-        href: meta.href,
-        name: meta.title
-      }))
-  }
+function getPageSiblings(dirname, pagesData) {
+    if (!Array.isArray(pagesData)) return []
 
-  const getPagePagination = (pagePathName, href, pagesData) => {
+    return pagesData
+        .filter(({ meta }) => meta?.dirname === dirname)
+        .sort((a, b) => {
+            if (a.meta[orderProperty] && b.meta[orderProperty]) {
+                return a.meta[orderProperty] - b.meta[orderProperty]
+            }
+
+            const aDate = new Date(a.meta.createdAt)
+            const bDate = new Date(b.meta.createdAt)
+            return aDate - bDate
+        })
+        .map(({ meta }) => ({
+            href: meta.href,
+            name: meta.title,
+        }))
+}
+
+function getPagePagination(dirname, href, pagesData) {
     const pagePagination = {
-      'previous': false,
-      'next': false
+        previous: false,
+        next: false,
     }
 
-    const pageSiblings = getPageSiblings(pagePathName, pagesData)
+    const pageSiblings = getPageSiblings(dirname, pagesData)
 
-    pageSiblings.forEach((page, index) => {
-      if (page.href === href) {
-        if (pageSiblings[index - 1]) {
-          pagePagination.previous = pageSiblings[index - 1]
+    const currentIndex = pageSiblings.findIndex((page) => page.href === href)
+    if (currentIndex !== -1) {
+        if (currentIndex > 0) {
+            pagePagination.previous = pageSiblings[currentIndex - 1]
         }
-
-        if (pageSiblings[index + 1]) {
-          pagePagination.next = pageSiblings[index + 1]
+        if (currentIndex < pageSiblings.length - 1) {
+            pagePagination.next = pageSiblings[currentIndex + 1]
         }
-      }
-    })
+    }
 
     return pagePagination
-  }
+}
 
-  const getMetaData = data => {
-    if (data.pagesData !== null && typeof data.pagesData === 'object') {
-      data.pagesData = data.pagesData.map(({ content, meta }) => ({
-        content,
-        meta: Object.assign({}, meta, {
-          pagePagination: getPagePagination(meta.pagePathName, meta.href, data.pagesData)
-        })
-      }))
+export function getMetaData(data) {
+    if (!data || !Array.isArray(data.pagesData)) {
+        return []
     }
 
-    return data.pagesData
-  }
-
-  return {
-    getMetaData
-  }
-})()
+    return data.pagesData.map(({ content, meta }) => ({
+        content,
+        meta: {
+            ...meta,
+            pagePagination: getPagePagination(
+                meta.dirname,
+                meta.href,
+                data.pagesData
+            ),
+        },
+    }))
+}

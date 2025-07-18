@@ -1,16 +1,50 @@
 {
-  "name": "page-pagination",
-  "version": "1.1.0",
-  "description": "A plugin for static side generator nera to create a page pagination.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "“Michael <micha.becker79@gmail.com> (https://github.com/seebaermichi)",
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/seebaermichi/nera-plugin-page-pagination"
-  }
+    "name": "@nera-static/plugin-page-pagination",
+    "version": "2.0.0",
+    "description": "A plugin for static site generator nera to create page pagination with previous/next navigation.",
+    "main": "index.js",
+    "scripts": {
+        "publish-template": "node ./bin/publish-template.js",
+        "lint": "eslint .",
+        "test": "vitest"
+    },
+    "type": "module",
+    "exports": {
+        ".": "./index.js"
+    },
+    "files": [
+        "config",
+        "index.js",
+        "views"
+    ],
+    "keywords": [
+        "nera",
+        "plugin",
+        "pagination",
+        "static-site"
+    ],
+    "author": "Michael Becker",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/seebaermichi/nera-plugin-page-pagination"
+    },
+    "bugs": {
+        "url": "https://github.com/seebaermichi/nera-plugin-page-pagination/issues"
+    },
+    "homepage": "https://github.com/seebaermichi/nera-plugin-page-pagination#readme",
+    "dependencies": {
+        "@nera-static/plugin-utils": "^1.0.3"
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "devDependencies": {
+        "cheerio": "^1.1.0",
+        "eslint": "^9.31.0",
+        "husky": "^9.1.7",
+        "pug": "^3.0.3",
+        "vitest": "^3.2.4"
+    },
+    "sideEffects": false
 }
