@@ -189,12 +189,12 @@ describe('Page Pagination Plugin', () => {
 
         const $ = load(html)
 
-        const previousLink = $('a.previous')
+        const previousLink = $('a.page-pagination__link--previous')
         expect(previousLink).toHaveLength(1)
         expect(previousLink.attr('href')).toBe('/docs/introduction.html')
         expect(previousLink.text().trim()).toBe('Introduction')
 
-        const nextLink = $('a.next')
+        const nextLink = $('a.page-pagination__link--next')
         expect(nextLink).toHaveLength(1)
         expect(nextLink.attr('href')).toBe('/docs/advanced.html')
         expect(nextLink.text().trim()).toBe('Advanced Topics')
@@ -221,11 +221,11 @@ describe('Page Pagination Plugin', () => {
 
         const $ = load(html)
 
-        const previousLink = $('a.previous')
+        const previousLink = $('a.page-pagination__link--previous')
         expect(previousLink).toHaveLength(1)
         expect(previousLink.attr('href')).toBe('/docs/introduction.html')
 
-        const nextLink = $('a.next')
+        const nextLink = $('a.page-pagination__link--next')
         expect(nextLink).toHaveLength(0)
     })
 
@@ -250,10 +250,10 @@ describe('Page Pagination Plugin', () => {
 
         const $ = load(html)
 
-        const previousLink = $('a.previous')
+        const previousLink = $('a.page-pagination__link--previous')
         expect(previousLink).toHaveLength(0)
 
-        const nextLink = $('a.next')
+        const nextLink = $('a.page-pagination__link--next')
         expect(nextLink).toHaveLength(1)
         expect(nextLink.attr('href')).toBe('/docs/advanced.html')
     })

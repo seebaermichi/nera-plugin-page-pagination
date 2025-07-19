@@ -20,11 +20,14 @@ beforeEach(() => {
     // Create the source template only if needed
     if (!fs.existsSync(TEMPLATE_SRC)) {
         fs.mkdirSync(path.dirname(TEMPLATE_SRC), { recursive: true })
-        fs.writeFileSync(TEMPLATE_SRC, `if meta.pagePagination.previous
+        fs.writeFileSync(
+            TEMPLATE_SRC,
+            `if meta.pagePagination.previous
   a.previous(href=meta.pagePagination.previous.href) #{ meta.pagePagination.previous.name }
 
 if meta.pagePagination.next
-  a.next(href=meta.pagePagination.next.href) #{ meta.pagePagination.next.name }`)
+  a.next(href=meta.pagePagination.next.href) #{ meta.pagePagination.next.name }`
+        )
     }
 })
 
@@ -42,8 +45,8 @@ describe('publish-template command', () => {
 
         const content = fs.readFileSync(TEMPLATE_DEST, 'utf-8')
         expect(content).toMatch(/meta\.pagePagination\.previous/)
-        expect(content).toMatch(/a\.previous/)
-        expect(content).toMatch(/a\.next/)
+        expect(content).toMatch(/page-pagination__link--previous/)
+        expect(content).toMatch(/page-pagination__link--next/)
     })
 
     it('skips if template already exists', () => {

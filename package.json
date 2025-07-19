@@ -1,7 +1,7 @@
 {
     "name": "@nera-static/plugin-page-pagination",
-    "version": "2.0.0",
-    "description": "A plugin for static site generator nera to create page pagination with previous/next navigation.",
+    "version": "2.1.0",
+    "description": "A plugin for Nera static site generator to create previous/next page pagination within directory structures. Perfect for blog posts, documentation sections, and sequential content navigation.",
     "main": "index.js",
     "scripts": {
         "publish-template": "node ./bin/publish-template.js",
@@ -21,7 +21,13 @@
         "nera",
         "plugin",
         "pagination",
-        "static-site"
+        "previous-next",
+        "page-navigation",
+        "static-site",
+        "static-site-generator",
+        "sequential-navigation",
+        "blog-pagination",
+        "documentation"
     ],
     "author": "Michael Becker",
     "license": "MIT",
@@ -34,7 +40,7 @@
     },
     "homepage": "https://github.com/seebaermichi/nera-plugin-page-pagination#readme",
     "dependencies": {
-        "@nera-static/plugin-utils": "^1.0.3"
+        "@nera-static/plugin-utils": "^1.1.0"
     },
     "engines": {
         "node": ">=18"

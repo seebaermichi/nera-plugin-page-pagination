@@ -188,6 +188,25 @@ Tests use [Vitest](https://vitest.dev) and cover:
 -   Edge cases (first page, last page, standalone pages)
 -   Template rendering with different pagination states
 
+### 🔄 Compatibility
+
+-   **Nera v4.1.0+**: Full compatibility with latest static site generator
+-   **Node.js 18+**: Modern JavaScript features and ES modules
+-   **Plugin Utils v1.1.0+**: Enhanced plugin utilities integration
+
+### 🏗️ Architecture
+
+This plugin uses the `getMetaData()` function to process page data and inject pagination information. It automatically detects pages in the same directory and provides sequential navigation links.
+
+### 🎨 BEM CSS Classes
+
+The plugin uses BEM (Block Element Modifier) methodology:
+
+-   `.page-pagination` - Main pagination container
+-   `.page-pagination__link` - Pagination links
+-   `.page-pagination__link--previous` - Previous page link
+-   `.page-pagination__link--next` - Next page link
+
 ## 🧑‍💻 Author
 
 Michael Becker  
@@ -198,6 +217,7 @@ Michael Becker
 -   [Plugin Repository](https://github.com/seebaermichi/nera-plugin-page-pagination)
 -   [NPM Package](https://www.npmjs.com/package/@nera-static/plugin-page-pagination)
 -   [Nera Static Site Generator](https://github.com/seebaermichi/nera)
+-   [Plugin Documentation](https://github.com/seebaermichi/nera#plugins)
 
 ## 📦 License
 

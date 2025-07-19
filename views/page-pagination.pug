@@ -1,5 +1,6 @@
-if meta.pagePagination.previous
-  a.previous(href=meta.pagePagination.previous.href) #{ meta.pagePagination.previous.name }
+nav.page-pagination
+  if meta.pagePagination.previous
+    a.page-pagination__link.page-pagination__link--previous(href=meta.pagePagination.previous.href) #{ meta.pagePagination.previous.name }
 
-if meta.pagePagination.next
-  a.next(href=meta.pagePagination.next.href) #{ meta.pagePagination.next.name }
+  if meta.pagePagination.next
+    a.page-pagination__link.page-pagination__link--next(href=meta.pagePagination.next.href) #{ meta.pagePagination.next.name }
