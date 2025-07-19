@@ -193,6 +193,12 @@ Tests use [Vitest](https://vitest.dev) and cover:
 Michael Becker  
 [https://github.com/seebaermichi](https://github.com/seebaermichi)
 
+## 🔗 Links
+
+-   [Plugin Repository](https://github.com/seebaermichi/nera-plugin-page-pagination)
+-   [NPM Package](https://www.npmjs.com/package/@nera-static/plugin-page-pagination)
+-   [Nera Static Site Generator](https://github.com/seebaermichi/nera)
+
 ## 📦 License
 
 MIT
