@@ -4,12 +4,13 @@ A plugin for the [Nera](https://github.com/seebaermichi/nera) static site genera
 
 ## ✨ Features
 
--   Automatically adds previous/next navigation based on sibling pages
--   Supports custom sorting via `pagination_order` meta field
--   Falls back to creation date when no order is specified
--   Configurable sorting property via YAML config
--   Includes a ready-to-use Pug view template
--   Lightweight and easy to integrate
+- Automatically generates previous/next links based on sibling pages
+- Supports custom sorting via `pagination_order` (or custom property)
+- Falls back to creation date when no order is specified
+- Configurable sorting property via `config/page-pagination.yaml`
+- Includes a ready-to-use Pug template
+- Lightweight and easy to integrate
+- Full compatibility with Nera v4.1.0+
 
 ## 🚀 Installation
 
@@ -19,13 +20,39 @@ Install the plugin in your Nera project:
 npm install @nera-static/plugin-page-pagination
 ```
 
-Nera will automatically detect the plugin and apply the page pagination metadata during the build.
+Nera will automatically detect the plugin and inject pagination metadata during the build.
 
-## 🛠️ Usage
+## ⚙️ Configuration
+
+Customize the order property by creating `config/page-pagination.yaml`:
+
+```yaml
+order_property: custom_order
+```
+
+This tells the plugin to use `custom_order` instead of `pagination_order`.
+
+### Example with custom property
+
+```yaml
+---
+title: Chapter 1
+custom_order: 100
+---
+```
+
+```yaml
+---
+title: Chapter 2
+custom_order: 200
+---
+```
+
+## 🧩 Usage
 
 ### Automatic sibling pagination
 
-The plugin automatically creates pagination between pages in the same directory. Pages are sorted by:
+Pages in the same directory are linked in order:
 
 1. **`pagination_order`** field (if present)
 2. **Creation date** (fallback)
@@ -33,7 +60,6 @@ The plugin automatically creates pagination between pages in the same directory.
 ```yaml
 ---
 title: Getting Started
-type: page
 pagination_order: 1
 ---
 ```
@@ -41,47 +67,40 @@ pagination_order: 1
 ```yaml
 ---
 title: Advanced Topics
-type: page
 pagination_order: 2
 ---
 ```
 
-This creates navigation like:
+Result:
 
--   "Getting Started" → Next: "Advanced Topics"
--   "Advanced Topics" → Previous: "Getting Started"
+- "Getting Started" → Next: "Advanced Topics"
+- "Advanced Topics" → Previous: "Getting Started"
 
 ### Directory-based grouping
 
-Only pages within the same directory are linked together:
+Only pages within the same directory are linked:
 
 ```
 pages/
 ├── docs/
-│   ├── intro.md          # Links to start.md
-│   └── start.md          # Links to intro.md
+│   ├── intro.md
+│   └── start.md
 └── blog/
-    └── post.md           # No pagination (standalone)
+    └── post.md
 ```
 
 ### Template integration
 
-The plugin adds a `pagePagination` object to each page's metadata:
+`meta.pagePagination` is added to each page:
 
 ```javascript
 {
-  previous: {
-    href: "/docs/intro.html",
-    name: "Introduction"
-  },
-  next: {
-    href: "/docs/advanced.html",
-    name: "Advanced Topics"
-  }
+  previous: { href: "/docs/intro.html", name: "Introduction" },
+  next: { href: "/docs/advanced.html", name: "Advanced Topics" }
 }
 ```
 
-Use it in your templates:
+Use in Pug:
 
 ```pug
 if meta.pagePagination.previous
@@ -93,7 +112,7 @@ if meta.pagePagination.next
     | #{meta.pagePagination.next.name} →
 ```
 
-## 🛠️ Publish Default Template
+## 🛠️ Template Publishing
 
 Use the default template provided by the plugin:
 
@@ -113,64 +132,22 @@ Include it in your layout:
 include /views/vendor/plugin-page-pagination/page-pagination
 ```
 
-## ⚙️ Configuration
+## 🎨 Styling
 
-Create a configuration file to customize the sorting behavior:
+The plugin uses BEM CSS methodology:
 
-```yaml
-# config/page-pagination.yaml
-order_property: custom_order
+```css
+.page-pagination { }
+.page-pagination__link { }
+.page-pagination__link--previous { }
+.page-pagination__link--next { }
 ```
 
-This tells the plugin to use `custom_order` instead of the default `pagination_order` field for sorting.
+Customize these classes in your CSS.
 
-### Example with custom property:
+## 📊 Generated Output
 
-```yaml
----
-title: Chapter 1
-custom_order: 100
----
-```
-
-```yaml
----
-title: Chapter 2
-custom_order: 200
----
-```
-
-## 🎯 Use Cases
-
-### Documentation Sites
-
-Create sequential navigation through documentation sections:
-
-```
-docs/installation.md    (pagination_order: 1)
-docs/getting-started.md (pagination_order: 2)
-docs/advanced.md        (pagination_order: 3)
-```
-
-### Tutorial Series
-
-Link tutorial steps in order:
-
-```
-tutorial/step-1.md      (pagination_order: 1)
-tutorial/step-2.md      (pagination_order: 2)
-tutorial/step-3.md      (pagination_order: 3)
-```
-
-### Blog Series
-
-Connect related blog posts:
-
-```
-blog/series/part-1.md   (pagination_order: 1)
-blog/series/part-2.md   (pagination_order: 2)
-blog/series/part-3.md   (pagination_order: 3)
-```
+The plugin injects pagination metadata into `meta.pagePagination`. The rendering depends on your chosen template or custom markup.
 
 ## 🧪 Development
 
@@ -182,42 +159,28 @@ npm run lint
 
 Tests use [Vitest](https://vitest.dev) and cover:
 
--   Sibling page detection and grouping
--   Sorting by `pagination_order` and creation date
--   Previous/next link generation
--   Edge cases (first page, last page, standalone pages)
--   Template rendering with different pagination states
-
-### 🔄 Compatibility
-
--   **Nera v4.1.0+**: Full compatibility with latest static site generator
--   **Node.js 18+**: Modern JavaScript features and ES modules
--   **Plugin Utils v1.1.0+**: Enhanced plugin utilities integration
-
-### 🏗️ Architecture
-
-This plugin uses the `getMetaData()` function to process page data and inject pagination information. It automatically detects pages in the same directory and provides sequential navigation links.
-
-### 🎨 BEM CSS Classes
-
-The plugin uses BEM (Block Element Modifier) methodology:
-
--   `.page-pagination` - Main pagination container
--   `.page-pagination__link` - Pagination links
--   `.page-pagination__link--previous` - Previous page link
--   `.page-pagination__link--next` - Next page link
+- Sibling page detection and grouping
+- Sorting by order property and fallback
+- Previous/next link generation
+- Edge cases (first page, last page)
+- Template rendering
 
 ## 🧑‍💻 Author
 
-Michael Becker  
+Michael Becker
 [https://github.com/seebaermichi](https://github.com/seebaermichi)
 
 ## 🔗 Links
 
--   [Plugin Repository](https://github.com/seebaermichi/nera-plugin-page-pagination)
--   [NPM Package](https://www.npmjs.com/package/@nera-static/plugin-page-pagination)
--   [Nera Static Site Generator](https://github.com/seebaermichi/nera)
--   [Plugin Documentation](https://github.com/seebaermichi/nera#plugins)
+- [Plugin Repository](https://github.com/seebaermichi/nera-plugin-page-pagination)
+- [NPM Package](https://www.npmjs.com/package/@nera-static/plugin-page-pagination)
+- [Nera Static Site Generator](https://github.com/seebaermichi/nera)
+
+## 🧩 Compatibility
+
+- **Nera**: v4.1.0+
+- **Node.js**: >= 18
+- **Plugin API**: Uses `getMetaData()` for pagination metadata
 
 ## 📦 License
 
