@@ -1,5 +1,8 @@
 # @nera-static/plugin-page-pagination
 
+[![Test](https://github.com/seebaermichi/nera-plugin-page-pagination/actions/workflows/test.yml/badge.svg)](https://github.com/seebaermichi/nera-plugin-page-pagination/actions/workflows/test.yml)
+[![npm version](https://img.shields.io/npm/v/@nera-static/plugin-page-pagination)](https://www.npmjs.com/package/@nera-static/plugin-page-pagination)
+
 A plugin for the [Nera](https://github.com/seebaermichi/nera) static site generator that creates previous/next navigation between sibling pages. Perfect for documentation sites, tutorials, or any sequential content that needs pagination-style navigation.
 
 ## ✨ Features
