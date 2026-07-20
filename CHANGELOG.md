@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-07-20
+
+### Added
+
+-   **the `publish-template` command is now actually shipped.** `bin/` was
+    missing from both the `bin` field and the `files` list, so the script was
+    never included in the published tarball — `npx nera-page-pagination` and
+    `npm run publish-template` both failed for every consumer. The command is
+    exposed as `nera-page-pagination`
+-   `--force` flag on that command, to re-publish over an existing template
+    and overwrite local edits. Without it, publishing skips as before
+
+### Fixed
+
+-   **pagination order is now deterministic when only some pages define
+    `pagination_order`.** The comparator fell back to creation date whenever
+    *either* page lacked an order, which is not a transitive relation: with
+    pages ordered 1 (March), 2 (January) and unordered (February) it produced
+    a cycle, and the same three pages sorted three different ways depending
+    only on the order the filesystem returned them in. Adding an unrelated
+    file to a directory could silently reshuffle a site's prev/next links.
+
+    Ordering is now a total order: pages with an explicit `pagination_order`
+    come first and sort by it, then pages without one sort by creation date,
+    and `href` breaks any remaining tie
+-   **`pagination_order: 0` is no longer treated as absent.** The guard tested
+    truthiness, so a page numbered from zero fell through to date sorting
+-   sorting no longer misbehaves when `createdAt` is missing or unparseable;
+    such pages sort last rather than producing `NaN` comparisons
+
+### Changed
+
+-   configuration is read inside `getMetaData` rather than at module load, so
+    edits to `config/page-pagination.yaml` take effect without a restart
+-   `@nera-static/plugin-utils` range raised to `^1.2.0`, where `force` lands
+
+### Documentation
+
+-   documented the full ordering rules, including that ordered and unordered
+    pages can be mixed safely and that `0` is a valid order
+-   the include example uses the layout-relative form, which works on every
+    Nera version; the previous absolute form requires 4.3.0 or later
+-   fixed an invalid `npx` invocation; the command is `npx nera-page-pagination`
+
 ## [2.1.0] - 2025-07-19
 
 ### Added

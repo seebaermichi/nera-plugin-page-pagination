@@ -54,8 +54,14 @@ custom_order: 200
 
 Pages in the same directory are linked in order:
 
-1. **`pagination_order`** field (if present)
-2. **Creation date** (fallback)
+1. Pages with a **`pagination_order`**, sorted by that value
+2. Then pages without one, sorted by **creation date**
+3. Ties are broken by `href`, so the result never depends on the order files
+   happen to be read from disk
+
+Mixing the two is safe: every page that defines `pagination_order` comes before
+every page that does not. `pagination_order: 0` is a valid value and sorts
+first — it is not treated as "unset".
 
 ```yaml
 ---
@@ -117,7 +123,7 @@ if meta.pagePagination.next
 Use the default template provided by the plugin:
 
 ```bash
-npx @nera-static/plugin-page-pagination run publish-template
+npx nera-page-pagination
 ```
 
 This copies the template to:
@@ -126,11 +132,23 @@ This copies the template to:
 views/vendor/plugin-page-pagination/page-pagination.pug
 ```
 
+Publishing skips when the file already exists, so re-running never discards
+your edits. To overwrite it with the packaged version:
+
+```bash
+npx nera-page-pagination --force
+```
+
 Include it in your layout:
 
 ```pug
-include /views/vendor/plugin-page-pagination/page-pagination
+include ../vendor/plugin-page-pagination/page-pagination
 ```
+
+The path is relative to the **including file**, so from a layout in
+`views/layouts/` this resolves to `views/vendor/…`. An absolute
+`include /views/vendor/…` also works, but only on Nera 4.3.0 and later — the
+relative form works on every version.
 
 ## 🎨 Styling
 

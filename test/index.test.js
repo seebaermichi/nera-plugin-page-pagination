@@ -1,8 +1,15 @@
 import path from 'path'
 import pug from 'pug'
 import { load } from 'cheerio'
+import { fileURLToPath } from 'url'
 import { describe, it, expect } from 'vitest'
 import { getMetaData } from '../index.js'
+
+// Resolved from this file, not from cwd. The old `path.resolve('views/...')`
+// form only worked while vitest happened to run from the package root.
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const PKG_ROOT = path.resolve(__dirname, '..')
+const TEMPLATE = path.join(PKG_ROOT, 'views/page-pagination.pug')
 
 describe('Page Pagination Plugin', () => {
     const pagesData = [
@@ -166,10 +173,10 @@ describe('Page Pagination Plugin', () => {
     })
 
     it('renders pagination template correctly', () => {
-        const templatePath = path.resolve('views/page-pagination.pug')
+        const templatePath = TEMPLATE
 
         const compileTemplate = pug.compileFile(templatePath, {
-            basedir: path.resolve('.'),
+            basedir: PKG_ROOT,
         })
 
         const html = compileTemplate({
@@ -201,10 +208,10 @@ describe('Page Pagination Plugin', () => {
     })
 
     it('renders template with only previous link', () => {
-        const templatePath = path.resolve('views/page-pagination.pug')
+        const templatePath = TEMPLATE
 
         const compileTemplate = pug.compileFile(templatePath, {
-            basedir: path.resolve('.'),
+            basedir: PKG_ROOT,
         })
 
         const html = compileTemplate({
@@ -230,10 +237,10 @@ describe('Page Pagination Plugin', () => {
     })
 
     it('renders template with only next link', () => {
-        const templatePath = path.resolve('views/page-pagination.pug')
+        const templatePath = TEMPLATE
 
         const compileTemplate = pug.compileFile(templatePath, {
-            basedir: path.resolve('.'),
+            basedir: PKG_ROOT,
         })
 
         const html = compileTemplate({
@@ -259,10 +266,10 @@ describe('Page Pagination Plugin', () => {
     })
 
     it('renders empty template when no pagination is available', () => {
-        const templatePath = path.resolve('views/page-pagination.pug')
+        const templatePath = TEMPLATE
 
         const compileTemplate = pug.compileFile(templatePath, {
-            basedir: path.resolve('.'),
+            basedir: PKG_ROOT,
         })
 
         const html = compileTemplate({
