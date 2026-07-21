@@ -1,6 +1,6 @@
 {
     "name": "@nera-static/plugin-page-pagination",
-    "version": "2.2.0",
+    "version": "2.3.0",
     "description": "A plugin for Nera static site generator to create previous/next page pagination within directory structures. Perfect for blog posts, documentation sections, and sequential content navigation.",
     "main": "index.js",
     "scripts": {
@@ -49,7 +49,7 @@
         "@nera-static/plugin-utils": "^1.2.0"
     },
     "engines": {
-        "node": ">=18"
+        "node": ">=20.0.0"
     },
     "devDependencies": {
         "cheerio": "^1.1.0",
