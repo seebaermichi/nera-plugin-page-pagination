@@ -1,1 +1,4 @@
-order_property: pagination_order
+# Frontmatter property used to order sibling pages.
+# Commented out because this is already the built-in default — uncomment only
+# to point the plugin at a different property name.
+# order_property: pagination_order

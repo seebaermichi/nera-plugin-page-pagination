@@ -19,6 +19,7 @@ describe('Page Pagination Plugin', () => {
                 title: 'Introduction',
                 href: '/docs/introduction.html',
                 dirname: '/docs',
+                layout: 'layouts/default.pug',
                 pagination_order: 1,
                 createdAt: '2023-01-01',
             },
@@ -29,6 +30,7 @@ describe('Page Pagination Plugin', () => {
                 title: 'Getting Started',
                 href: '/docs/getting-started.html',
                 dirname: '/docs',
+                layout: 'layouts/default.pug',
                 pagination_order: 2,
                 createdAt: '2023-01-02',
             },
@@ -39,6 +41,7 @@ describe('Page Pagination Plugin', () => {
                 title: 'Advanced Topics',
                 href: '/docs/advanced.html',
                 dirname: '/docs',
+                layout: 'layouts/default.pug',
                 pagination_order: 3,
                 createdAt: '2023-01-03',
             },
@@ -49,6 +52,7 @@ describe('Page Pagination Plugin', () => {
                 title: 'Standalone Page',
                 href: '/blog/standalone.html',
                 dirname: '/blog',
+                layout: 'layouts/default.pug',
                 createdAt: '2023-01-04',
             },
         },
@@ -122,6 +126,7 @@ describe('Page Pagination Plugin', () => {
                     title: 'Page 1',
                     href: '/test/page1.html',
                     dirname: '/test',
+                    layout: 'layouts/default.pug',
                     createdAt: '2023-01-03',
                 },
             },
@@ -131,6 +136,7 @@ describe('Page Pagination Plugin', () => {
                     title: 'Page 2',
                     href: '/test/page2.html',
                     dirname: '/test',
+                    layout: 'layouts/default.pug',
                     createdAt: '2023-01-01',
                 },
             },
@@ -140,6 +146,7 @@ describe('Page Pagination Plugin', () => {
                     title: 'Page 3',
                     href: '/test/page3.html',
                     dirname: '/test',
+                    layout: 'layouts/default.pug',
                     createdAt: '2023-01-02',
                 },
             },
@@ -263,6 +270,35 @@ describe('Page Pagination Plugin', () => {
         const nextLink = $('a.page-pagination__link--next')
         expect(nextLink).toHaveLength(1)
         expect(nextLink.attr('href')).toBe('/docs/advanced.html')
+    })
+
+    // Regression: the template dereferenced `meta.pagePagination.previous`
+    // unguarded. On pages created by a plugin that runs after this one —
+    // plugin-tags builds its tag overview pages inside its own getMetaData, and
+    // this plugin sorts before it alphabetically — the key is *absent*, not
+    // empty, so the render threw and took the whole build down.
+    it('renders nothing rather than throwing when pagePagination is absent', () => {
+        const compileTemplate = pug.compileFile(TEMPLATE, {
+            basedir: PKG_ROOT,
+        })
+
+        for (const meta of [{ title: 'Generated page' }, {}]) {
+            let html
+            expect(() => {
+                html = compileTemplate({ meta })
+            }).not.toThrow()
+
+            expect(load(html)('a')).toHaveLength(0)
+            expect(load(html)('nav.page-pagination')).toHaveLength(1)
+        }
+    })
+
+    it('renders nothing rather than throwing when meta itself is absent', () => {
+        const compileTemplate = pug.compileFile(TEMPLATE, {
+            basedir: PKG_ROOT,
+        })
+
+        expect(() => compileTemplate({})).not.toThrow()
     })
 
     it('renders empty template when no pagination is available', () => {

@@ -31,8 +31,27 @@ function compareSiblings(a, b, orderProperty) {
         return aHasOrder ? -1 : 1
     }
 
-    if (aHasOrder && bHasOrder && aOrder !== bOrder) {
-        return aOrder - bOrder
+    // `aOrder - bOrder` alone is NaN for a non-numeric order, and a comparator
+    // returning NaN makes Array.prototype.sort undefined behaviour: three pages
+    // ordered `intro`/`setup`/`zed` came out in a different order for each of
+    // the six input permutations, i.e. the result depended only on the order
+    // fs.readdir returned the files in. Numeric strings ('10' vs '2') still
+    // compare numerically, which is why this survived the 2.2.0 sweep.
+    if (aHasOrder && bHasOrder) {
+        const aNumber = Number(aOrder)
+        const bNumber = Number(bOrder)
+
+        if (!Number.isNaN(aNumber) && !Number.isNaN(bNumber)) {
+            if (aNumber !== bNumber) {
+                return aNumber - bNumber
+            }
+        } else {
+            const byString = String(aOrder).localeCompare(String(bOrder))
+
+            if (byString !== 0) {
+                return byString
+            }
+        }
     }
 
     const aDate = new Date(a.meta?.createdAt).getTime()
@@ -53,8 +72,13 @@ function compareSiblings(a, b, orderProperty) {
 function getPageSiblings(dirname, pagesData, orderProperty) {
     if (!Array.isArray(pagesData)) return []
 
+    // `meta.layout` as well as the directory: the generator renders a page only
+    // if its frontmatter has a layout (generator/src/render.js), so a page
+    // without one is never written to public/. Including it here produced a
+    // prev/next link to a URL that does not exist — easy to hit, because
+    // nera-plugin-stacks recommends giving stack pages no layout.
     return pagesData
-        .filter(({ meta }) => meta?.dirname === dirname)
+        .filter(({ meta }) => meta?.dirname === dirname && meta?.layout)
         .sort((a, b) => compareSiblings(a, b, orderProperty))
         .map(({ meta }) => ({
             href: meta.href,

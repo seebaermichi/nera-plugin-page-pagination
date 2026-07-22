@@ -1,6 +1,12 @@
-nav.page-pagination
-  if meta.pagePagination.previous
-    a.page-pagination__link.page-pagination__link--previous(href=meta.pagePagination.previous.href) #{ meta.pagePagination.previous.name }
+//- `meta.pagePagination` is absent — not empty — on pages created by a plugin
+//- that runs after this one (plugin-tags builds its tag overview pages inside
+//- its own getMetaData, and this plugin sorts before it alphabetically).
+//- Without this guard the template threw and killed the whole render.
+- var pagePagination = (typeof meta !== 'undefined' && meta && meta.pagePagination) || {}
 
-  if meta.pagePagination.next
-    a.page-pagination__link.page-pagination__link--next(href=meta.pagePagination.next.href) #{ meta.pagePagination.next.name }
+nav.page-pagination
+  if pagePagination.previous
+    a.page-pagination__link.page-pagination__link--previous(href=pagePagination.previous.href) #{ pagePagination.previous.name }
+
+  if pagePagination.next
+    a.page-pagination__link.page-pagination__link--next(href=pagePagination.next.href) #{ pagePagination.next.name }

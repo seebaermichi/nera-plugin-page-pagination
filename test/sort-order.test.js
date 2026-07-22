@@ -27,6 +27,7 @@ const page = (title, order, createdAt) => ({
         title,
         href: `/blog/${title}.html`,
         dirname: '/blog',
+        layout: 'layouts/default.pug',
         ...(order === undefined ? {} : { pagination_order: order }),
         createdAt,
     },
@@ -152,6 +153,83 @@ describe('sibling ordering', () => {
         expect(orderings.size).toBe(1)
     })
 
+    // Regression: the comparator returned `aOrder - bOrder`, which is NaN for a
+    // non-numeric order. A comparator returning NaN makes sort undefined
+    // behaviour, and these three pages came back in a *different* order for
+    // each of the six input permutations.
+    it('orders non-numeric pagination_order deterministically', () => {
+        const pages = [
+            page('a', 'intro', '2024-01-01'),
+            page('b', 'setup', '2024-02-01'),
+            page('c', 'zed', '2024-03-01'),
+        ]
+
+        const orderings = new Set(
+            permutations(pages).map((p) => resolveOrder(p).join(','))
+        )
+
+        expect(orderings.size).toBe(1)
+        expect(resolveOrder(pages)).toEqual(['a', 'b', 'c'])
+    })
+
+    it('still compares numeric strings as numbers, not as text', () => {
+        const pages = [
+            page('ten', '10', '2024-01-01'),
+            page('two', '2', '2024-02-01'),
+            page('one', '1', '2024-03-01'),
+        ]
+
+        // Text order would be 1, 10, 2. This is the behaviour that already
+        // worked before the NaN fix and must not change.
+        expect(resolveOrder(pages)).toEqual(['one', 'two', 'ten'])
+    })
+
+    it('is deterministic when numeric and non-numeric orders are mixed', () => {
+        const pages = [
+            page('num', 1, '2024-01-01'),
+            page('text', 'intro', '2024-02-01'),
+            page('other', 'setup', '2024-03-01'),
+        ]
+
+        const orderings = new Set(
+            permutations(pages).map((p) => resolveOrder(p).join(','))
+        )
+
+        expect(orderings.size).toBe(1)
+    })
+
+    // Regression: the generator writes a page to public/ only if its frontmatter
+    // has a `layout`, so a layout-less sibling was linked to a URL that does not
+    // exist. nera-plugin-stacks recommends omitting `layout`, so this is easy to
+    // hit by following the docs.
+    it('does not link to siblings that have no layout', () => {
+        const draft = page('draft', 2, '2024-02-01')
+        delete draft.meta.layout
+
+        const pages = [
+            page('first', 1, '2024-01-01'),
+            draft,
+            page('last', 3, '2024-03-01'),
+        ]
+
+        expect(resolveOrder(pages)).toEqual(['first', 'last'])
+    })
+
+    it('gives a layout-less page itself no pagination', () => {
+        const draft = page('draft', 2, '2024-02-01')
+        delete draft.meta.layout
+
+        const result = getMetaData({
+            pagesData: [page('first', 1, '2024-01-01'), draft],
+        })
+        const drafted = result.find((p) => p.meta.title === 'draft')
+
+        expect(drafted.meta.pagePagination).toEqual({
+            previous: false,
+            next: false,
+        })
+    })
+
     it('honours a custom order_property from config', () => {
         fs.mkdirSync(path.join(cwd, 'config'), { recursive: true })
         fs.writeFileSync(
@@ -166,6 +244,7 @@ describe('sibling ordering', () => {
                 title,
                 href: `/blog/${title}.html`,
                 dirname: '/blog',
+                layout: 'layouts/default.pug',
                 weight,
                 createdAt,
             },
