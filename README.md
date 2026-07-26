@@ -5,6 +5,8 @@
 
 A plugin for the [Nera](https://github.com/seebaermichi/nera) static site generator that creates previous/next navigation between sibling pages. Perfect for documentation sites, tutorials, or any sequential content that needs pagination-style navigation.
 
+📖 **Documentation:** [nera.js.org](https://nera.js.org)
+
 ## ✨ Features
 
 - Automatically generates previous/next links based on sibling pages
@@ -320,6 +322,7 @@ Michael Becker
 
 - [Plugin Repository](https://github.com/seebaermichi/nera-plugin-page-pagination)
 - [NPM Package](https://www.npmjs.com/package/@nera-static/plugin-page-pagination)
+- [Nera Website](https://nera.js.org)
 - [Nera Static Site Generator](https://github.com/seebaermichi/nera)
 
 ## 🧩 Compatibility
