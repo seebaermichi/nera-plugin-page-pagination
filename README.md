@@ -193,18 +193,22 @@ npx nera-page-pagination
 This copies the template to:
 
 ```
-views/vendor/plugin-page-pagination/page-pagination.pug
+theme/views/vendor/plugin-page-pagination/page-pagination.pug
 ```
 
+That is the path on a site scaffolded with `nera new`, whose views live in
+`theme/views/`. On an older site that renders from root `views/`, drop the
+`theme/` prefix — the command picks the right destination automatically.
+
 Publishing skips when the **destination directory**
-`views/vendor/plugin-page-pagination/` already exists — the check is on the
+`…/vendor/plugin-page-pagination/` already exists — the check is on the
 directory, not on each file. Re-running therefore never discards your edits, but
 it also copies nothing at all: if you delete a published template and re-run the
 command, the file is **not** restored and the command still exits `0`.
 
 > **`--force` is what delivers a template update.** When a release changes the
 > shipped template, upgrading the package does not change the copy under
-> `views/vendor/`. Your site keeps the old template silently — the upgrade is
+> `theme/views/vendor/`. Your site keeps the old template silently — the upgrade is
 > clean and the new behaviour simply never appears. Re-publish to pick it up:
 >
 > ```bash
@@ -220,20 +224,22 @@ Include it in your layout:
 include ../vendor/plugin-page-pagination/page-pagination
 ```
 
-The path is relative to the **including file**, so from a layout in
-`views/layouts/` this resolves to `views/vendor/…`. Adjust the number of `../`
-segments to match your layout's depth; a bare `vendor/…` would resolve to
-`views/layouts/vendor/…` and fail.
+The path is relative to the **including file**, so from the shell layout
+`theme/views/layouts/layout.pug` (or a page template in `theme/views/pages/`)
+this resolves to `theme/views/vendor/…`. Adjust the number of `../` segments to
+match your layout's depth; a bare `vendor/…` would resolve to
+`theme/views/layouts/vendor/…` and fail.
 
 On Nera 4.3.0 and later you can use the location-independent root-absolute form
-instead, which is resolved relative to `views/` and so works from any depth:
+instead, which is resolved relative to the views folder and so works from any
+depth:
 
 ```pug
 include /vendor/plugin-page-pagination/page-pagination
 ```
 
-Note there is no `views/` segment in it — `include /views/vendor/…` looks for
-`views/views/vendor/…` and fails.
+Note there is no `theme/` or `views/` segment in it — `include /views/vendor/…`
+looks for `theme/views/views/vendor/…` and fails.
 
 ## 🎨 Styling
 
@@ -249,7 +255,7 @@ The plugin uses BEM CSS methodology:
 Customize these classes in your CSS.
 
 > **These class names are a public contract.** You hold your own copy of the
-> template under `views/vendor/plugin-page-pagination/` and style it from your
+> template under `theme/views/vendor/plugin-page-pagination/` and style it from your
 > own CSS, so renaming a class here is a **breaking change** and only ships in a
 > major release.
 
@@ -334,7 +340,8 @@ Michael Becker
   **v4.2.0+**, where plugin ordering was added; on 4.1.x the file is ignored and
   plugin-generated pages get no pagination. The optional root-absolute include
   form needs **v4.3.0+**; the relative form documented above works on every
-  version.
+  version. The `theme/` folder layout used in the examples above — what
+  `nera new` scaffolds — needs **v4.6.0+**.
 - **Node.js**: >= 20.0.0
 - **plugin-utils**: ^1.2.0
 - **Plugin API**: Uses `getMetaData()` for pagination metadata
