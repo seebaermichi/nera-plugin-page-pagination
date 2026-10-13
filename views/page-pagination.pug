@@ -3,8 +3,12 @@
 //- its own getMetaData, and this plugin sorts before it alphabetically).
 //- Without this guard the template threw and killed the whole render.
 - var pagePagination = (typeof meta !== 'undefined' && meta && meta.pagePagination) || {}
+//- A page with another <nav> (the main menu) needs each one named, or
+//- screen readers announce two identical "navigation" landmarks. `t` is the
+//- site's translation helper; the key falls back to itself.
+- var paginationLabel = typeof t === 'function' ? t('Pagination') : 'Pagination'
 
-nav.page-pagination
+nav.page-pagination(aria-label=paginationLabel)
   if pagePagination.previous
     a.page-pagination__link.page-pagination__link--previous(href=pagePagination.previous.href) #{ pagePagination.previous.name }
 

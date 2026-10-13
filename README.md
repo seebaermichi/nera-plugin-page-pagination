@@ -267,17 +267,23 @@ this package:
 
 ```html
 <!-- first page in the directory: next only -->
-<nav class="page-pagination"><a class="page-pagination__link page-pagination__link--next" href="/docs/page2.html">Page 2</a></nav>
+<nav class="page-pagination" aria-label="Pagination"><a class="page-pagination__link page-pagination__link--next" href="/docs/page2.html">Page 2</a></nav>
 
 <!-- middle page: both links -->
-<nav class="page-pagination"><a class="page-pagination__link page-pagination__link--previous" href="/docs/page1.html">Page 1</a><a class="page-pagination__link page-pagination__link--next" href="/docs/page3.html">Page 3</a></nav>
+<nav class="page-pagination" aria-label="Pagination"><a class="page-pagination__link page-pagination__link--previous" href="/docs/page1.html">Page 1</a><a class="page-pagination__link page-pagination__link--next" href="/docs/page3.html">Page 3</a></nav>
 
 <!-- last page: previous only -->
-<nav class="page-pagination"><a class="page-pagination__link page-pagination__link--previous" href="/docs/page2.html">Page 2</a></nav>
+<nav class="page-pagination" aria-label="Pagination"><a class="page-pagination__link page-pagination__link--previous" href="/docs/page2.html">Page 2</a></nav>
 
 <!-- page with no siblings: the nav element is still emitted, empty -->
-<nav class="page-pagination"></nav>
+<nav class="page-pagination" aria-label="Pagination"></nav>
 ```
+
+The `<nav>` is named for screen readers with `aria-label`, so it stays
+distinguishable from your main menu (and `nera check` reports no
+`a11y-nav-name`). The label is the translation key `Pagination`: add it under
+`translations.<lang>` in `config/app.yaml` to translate it, e.g.
+`Pagination: Seitennavigation`.
 
 The empty `<nav>` in the last case is worth knowing about if you style the block
 with borders, padding or margins — use `.page-pagination:empty` to hide it.

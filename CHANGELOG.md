@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-10-13
+
+### Added
+
+-   **The pagination `<nav>` is named.** The template now renders
+    `<nav class="page-pagination" aria-label="Pagination">`, so a page that
+    also has a main menu no longer shows two unnamed navigation landmarks
+    (`a11y-nav-name` in `nera check`). The label goes through `t()`: translate
+    it with the key `Pagination` under `translations.<lang>` in
+    `config/app.yaml`. Classes and structure are unchanged. A site that
+    published the template before picks this up with
+    `npx nera-page-pagination --force`, or by adding the attribute to its copy.
+
 ## [2.3.2] - 2026-10-08
 
 ### Fixed

@@ -214,6 +214,18 @@ describe('Page Pagination Plugin', () => {
         expect(nextLink.text().trim()).toBe('Advanced Topics')
     })
 
+    it('names the nav landmark through t(), falling back to English', () => {
+        const compileTemplate = pug.compileFile(TEMPLATE, { basedir: PKG_ROOT })
+        const meta = { pagePagination: {} }
+
+        expect(load(compileTemplate({ meta }))('nav').attr('aria-label'))
+            .toBe('Pagination')
+
+        const t = (key) => ({ Pagination: 'Seitennavigation' })[key] || key
+        expect(load(compileTemplate({ meta, t }))('nav').attr('aria-label'))
+            .toBe('Seitennavigation')
+    })
+
     it('renders template with only previous link', () => {
         const templatePath = TEMPLATE
 
