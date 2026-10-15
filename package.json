@@ -36,7 +36,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/seebaermichi/nera-plugin-page-pagination"
+        "url": "git+https://github.com/seebaermichi/nera-plugin-page-pagination.git"
     },
     "bugs": {
         "url": "https://github.com/seebaermichi/nera-plugin-page-pagination/issues"
@@ -60,6 +60,6 @@
     },
     "sideEffects": false,
     "bin": {
-        "nera-page-pagination": "./bin/publish-template.js"
+        "nera-page-pagination": "bin/publish-template.js"
     }
 }
